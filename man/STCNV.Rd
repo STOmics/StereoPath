@@ -6,6 +6,7 @@
 \usage{
 STCNV(
   seurat_obj,
+  test_adata,
   output_dir,
   gene_order_file,
   metadata,
@@ -27,6 +28,8 @@ STCNV(
 }
 \arguments{
 \item{seurat_obj}{A Seurat object containing spatial transcriptome data.}
+
+\item{test_adata}{A Seurat object containing test spatial transcriptome data.}
 
 \item{output_dir}{The directory where the output files and results will be saved.}
 

@@ -3,6 +3,7 @@
 #' This function conducts a comprehensive analysis of spatial transcriptome copy number variations (CNV) using Seurat and InferCNV.
 #'
 #' @param seurat_obj A Seurat object containing spatial transcriptome data.
+#' @param test_adata A Seurat object containing test spatial transcriptome data.
 #' @param output_dir The directory where the output files and results will be saved.
 #' @param gene_order_file A .Rdata file containing gene order information.
 #' @param metadata A vector specifying group variables to identify test and ref.
@@ -37,7 +38,7 @@
 #' @import infercnv
 #' @import ggsci
 #' @import patchwork
-STCNV <- function(seurat_obj, output_dir, gene_order_file, metadata, patient_id, ref_group_names,
+STCNV <- function(seurat_obj, test_adata, output_dir, gene_order_file, metadata, patient_id, ref_group_names,
                   cutoff=0.01, cluster_by_groups=T, denoise=T, HMM=F, num_threads=15, tumor_subcluster_partition_method='qnorm', analysis_mode='samples',
                   k_nn=30, leiden_resolution=1, tumor_subcluster_pval=0.05, iter_max=100, file_name = "D8_rm_leiden3_cnv.pdf"){
 
@@ -101,10 +102,10 @@ STCNV <- function(seurat_obj, output_dir, gene_order_file, metadata, patient_id,
   seurat_obj_test = RenameCells(seurat_obj_test, add.cell.id = patient_id)
 
   fil_seurat_obj_test = subset(seurat_obj_test, cells = rownames(CNV_score))
-
   fil_seurat_obj_test$cnv_score = CNV_score[colnames(fil_seurat_obj_test), 1]
-  seurat_obj_test$cnv_score = NA
-  seurat_obj_test$cnv_score[colnames(fil_seurat_obj_test)] = CNV_score[colnames(fil_seurat_obj_test), 1]
+
+  test_adata$cnv_score = NA
+  test_adata$cnv_score[colnames(fil_seurat_obj_test)] = CNV_score[colnames(fil_seurat_obj_test), 1]
 
   f <- FeaturePlot(fil_seurat_obj_test, features = 'cnv_score', reduction = 'spatial')
   png('spatial_CNV_score.png')
@@ -182,15 +183,15 @@ STCNV <- function(seurat_obj, output_dir, gene_order_file, metadata, patient_id,
 
   # --------------------------------------------- Step3: Identification of malignant cells
   # add malignant info to meta.data
-  seurat_obj_test$malignant = NA
+  test_adata$malignant = NA
 
-  seurat_obj_test$malignant[colnames(seurat_obj_test) %in% rownames(kmeans_df_s)[kmeans_df_s$kmeans_class == names(tapply(fil_seurat_obj_test$cnv_score, list(fil_seurat_obj_test$kmean_cluster), mean))[which.max(tapply(fil_seurat_obj_test$cnv_score, list(fil_seurat_obj_test$kmean_cluster), mean))]]] <- 'Malignant cells'
+  test_adata$malignant[colnames(test_adata) %in% rownames(kmeans_df_s)[kmeans_df_s$kmeans_class == names(tapply(fil_seurat_obj_test$cnv_score, list(fil_seurat_obj_test$kmean_cluster), mean))[which.max(tapply(fil_seurat_obj_test$cnv_score, list(fil_seurat_obj_test$kmean_cluster), mean))]]] <- 'Malignant cells'
 
-  seurat_obj_test$malignant[colnames(seurat_obj_test) %in% rownames(kmeans_df_s)[kmeans_df_s$kmeans_class == names(tapply(fil_seurat_obj_test$cnv_score, list(fil_seurat_obj_test$kmean_cluster), mean))[which.min(tapply(fil_seurat_obj_test$cnv_score, list(fil_seurat_obj_test$kmean_cluster), mean))]]] <- 'Non-Malignant cells'
+  test_adata$malignant[colnames(test_adata) %in% rownames(kmeans_df_s)[kmeans_df_s$kmeans_class == names(tapply(fil_seurat_obj_test$cnv_score, list(fil_seurat_obj_test$kmean_cluster), mean))[which.min(tapply(fil_seurat_obj_test$cnv_score, list(fil_seurat_obj_test$kmean_cluster), mean))]]] <- 'Non-Malignant cells'
 
-  table(seurat_obj_test$malignant, useNA = 'ifany')
+  table(test_adata$malignant, useNA = 'ifany')
 
-  tmp = subset(seurat_obj_test, malignant %in% c('Malignant cells', 'Non-Malignant cells'))
+  tmp = subset(test_adata, malignant %in% c('Malignant cells', 'Non-Malignant cells'))
 
   d1 <- DimPlot(tmp, group.by = 'malignant', reduction = 'spatial', cols = if(tapply(tmp$cnv_score, list(tmp$malignant), mean)[1]>tapply(tmp$cnv_score, list(tmp$malignant), mean)[2]){ my_cols }else{ rev(my_cols) }) + NoLegend()
   d2 <- DimPlot(tmp, group.by = 'malignant', reduction = 'spatial', split.by = 'malignant', cols = if(tapply(tmp$cnv_score, list(tmp$malignant), mean)[1]>tapply(tmp$cnv_score, list(tmp$malignant), mean)[2]){ my_cols }else{ rev(my_cols) })
@@ -205,7 +206,7 @@ STCNV <- function(seurat_obj, output_dir, gene_order_file, metadata, patient_id,
 
   saveRDS(seurat_obj_test, file = 'seurat_malignant.rds')
 
-  CNV_heatmap(seurat_obj_test, output_dir = output_dir, file_name = file_name)
+  CNV_heatmap(test_adata, output_dir = output_dir, file_name = file_name)
 
   return(seurat_obj_test)
 }
