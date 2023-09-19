@@ -1,0 +1,29 @@
+Package: StereoPath
+Title: StereoPath: Reconstructing Traditional Pathology via Stereo-Seq Data
+Version: 0.0.1
+Authors@R: 
+    person("Huang", "huaqiang", , "huanghuaqiang@genomics.cn", role = c("aut", "cre"),
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: StereoPath is an R package that provides tools and functions to repeat traditional pathology using stereo-seq data. It enables the identification of malignant cells, analysis of vasculature structure, estimation of proliferative proportion, and classification of dMMR/pMMR phenotype. This package is a valuable resource for researchers and pathologists working with spatial transcriptomics data.
+License: MIT + file LICENSE
+Imports:
+    tidyverse,
+    infercnv,
+    Seurat,
+    ggsci,
+    patchwork,
+    SingleR,
+    AUCell,
+    nichenetr,
+    ggplot2,
+    ggpubr,
+    ggrepel,
+    mclust,
+    reshape2,
+    futile.logger
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Depends: 
+    R (>= 2.10)
+LazyData: true
