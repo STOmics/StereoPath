@@ -65,7 +65,7 @@ STpheno <- function(seurat_obj_list, sample_id, phenotype_id){
     tmp = GetAssayData(seurat_obj_list[[i]], slot = 'data')
 
     print(paste0(names(seurat_obj_list)[i], ': ', length(colnames(subset(seurat_obj_list[[i]], malignant == 'Malignant cells')))))
-    tmp = tmp[a, colnames(subset(seurat_obj_list[[i]], malignant == 'Malignant cells')) ]
+    tmp = tmp[gene_name, colnames(subset(seurat_obj_list[[i]], malignant == 'Malignant cells')) ]
 
     tmp = rowMeans(tmp)
 
@@ -120,9 +120,10 @@ STpheno <- function(seurat_obj_list, sample_id, phenotype_id){
 
   tempdf = data.frame(score = tempscore, phenotype = phenotype_id)
 
-  pdf('scatter_dMMR_pMMR_classification.pdf')
-  ggplot(tempdf, aes(x = score, y = 0.1)) + geom_point(aes(color = phenotype, size = 10)) + geom_label_repel(aes(score, 0.1, label = rownames(tempdf)), segment.colour="black", min.segment.length = 0) + guides(size = 'none', color = guide_legend(title = 'Phenotype')) +
+  g = ggplot(tempdf, aes(x = score, y = 0.1)) + geom_point(aes(color = phenotype, size = 10)) + geom_label_repel(aes(score, 0.1, label = rownames(tempdf)), segment.colour="black", min.segment.length = 0) + guides(size = 'none', color = guide_legend(title = 'Phenotype')) +
     theme_bw() + theme(text = element_text(size = 13)) + ylab('') + scale_y_discrete(labels = '') + xlab('MMR Loss score') + ggtitle('Stereo_CRC') + scale_color_manual(values = c("#f391bd","#8bc0ee")) + theme(panel.grid = element_blank())
+  pdf('scatter_dMMR_pMMR_classification.pdf')
+  print(g)
   dev.off()
 
   # --------------------- boxplot
@@ -133,9 +134,9 @@ STpheno <- function(seurat_obj_list, sample_id, phenotype_id){
     theme(legend.background = element_blank(), legend.key = element_blank(), text = element_text(size = 25), axis.text = element_text(size = 25, colour = 'black'), panel.background = element_rect(fill = "white"),
           axis.line = element_line(colour = "black", size = 0.5)) + ylab('MMR Loss Score') + xlab('') + stat_compare_means(method = test.method, size = 8) + scale_color_brewer(palette = 'Paired') +
     guides( color=guide_legend(title="Patient", override.aes = list(size=3)), size = F, fill = guide_legend(title = 'Group')) + scale_fill_manual(values = c("#f391bd","#8bc0ee"))
-  png("boxplot_mmr_loss_score.png")
-  print(g)
-  dev.off()
+  # png("boxplot_mmr_loss_score.png")
+  # print(g)
+  # dev.off()
 
   ggsave(filename = 'boxplot_MMR_loss_score.pdf', g, dpi = 300)
 }

@@ -208,7 +208,7 @@ STCNV <- function(seurat_obj, test_adata, output_dir, gene_order_file, metadata,
 
   CNV_heatmap(test_adata, output_dir = output_dir, file_name = file_name)
 
-  return(seurat_obj_test)
+  return(test_adata)
 }
 
 #' Create a CNV Heatmap
