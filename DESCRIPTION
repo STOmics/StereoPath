@@ -4,7 +4,7 @@ Version: 0.0.1
 Authors@R: 
     person("Huang", "huaqiang", , "huanghuaqiang@genomics.cn", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: StereoPath is an R package that provides tools and functions to repeat traditional pathology using stereo-seq data. It enables the identification of malignant cells, analysis of vasculature structure, estimation of proliferative proportion, and classification of dMMR/pMMR phenotype. This package is a valuable resource for researchers and pathologists working with spatial transcriptomics data.
+Description: StereoPath is an R package that provides functions to repeat traditional pathology using stereo-seq data. It enables the identification of malignant cells, analysis of vasculature structure, estimation of proliferative proportion, and classification of dMMR/pMMR phenotype.
 License: MIT + file LICENSE
 Imports:
     tidyverse,
