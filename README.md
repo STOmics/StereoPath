@@ -9,6 +9,15 @@ StereoPath R package can be easily installed from Github using devtools:
 devtools::install_github("STOmics/StereoPath")
 ```
 
+or
+
+```
+git clone https://github.com/STOmics/StereoPath.git
+
+# In R
+install.packages('StereoPath', repo=NULL)
+```
+
 ## Usage
 
 ```
