@@ -12,7 +12,6 @@
 #' @import Seurat
 #' @import SingleR
 #' @import AUCell
-#' @import nichenetr
 #' @import ggplot2
 #' @import tidyverse
 #' @import futile.logger
@@ -25,8 +24,8 @@ STanno <- function(seurat_obj, cutoff = 0.1){
   ####################################################################################################
   # ---------------- vascular signature -----------------
   flog.info("Vascular signature")
-  genes = c('2900026A02Rik', 'Adgrf5', 'Adgrl4', 'Aqp1', 'Arhgap29', 'Cd300lg', 'Cdh13', 'Cdh5', 'Cldn5', 'Clu', 'Col4a1', 'Col4a2', 'Crim1', 'Ctla2a', 'Cyyr1', 'Ece1', 'Ecscr', 'Egfl7', 'Emcn', 'Epas1', 'Esam', 'Esm1', 'Fabp4', 'Flt1', 'Flt4', 'Gpihbp1', 'Igfbp3', 'Inhbb', 'Kdr', 'Ldb2', 'Lrg1', 'Ltbp4', 'Mgll', 'Mmrn2', 'Myct1', 'Pcdh17', 'Pecam1', 'Plxna2', 'Podxl', 'Prex2', 'Prss23', 'Ptprb', 'Ramp2', 'Rapgef5', 'Rasip1', 'S1pr1', 'Sorbs2', 'Stc1', 'Tie1', 'Trp53i11')
-  genes <- nichenetr::convert_mouse_to_human_symbols(symbols = genes)
+  genes = c('KIAA1671', 'ADGRF5', 'ADGRL4', 'AQP1', 'ARHGAP29', 'CD300LG', 'CDH13', 'CDH5', 'CLDN5', 'CLU', 'COL4A1', 'COL4A2', 'CRIM1', 'CYYR1', 'ECE1', 'ECSCR', 'EGFL7', 'EMCN', 'EPAS1', 'ESAM', 'ESM1', 'FABP4', 'FLT1', 'FLT4', 'GPIHBP1', 'IGFBP3', 'INHBB', 'KDR', 'LDB2', 'LRG1', 'LTBP4', 'MGLL', 'MMRN2', 'MYCT1', 'PCDH17', 'PECAM1', 'PLXNA2', 'PODXL', 'PREX2', 'PRSS23', 'PTPRB', 'RAMP2', 'RAPGEF5', 'RASIP1', 'S1PR1', 'SORBS2', 'STC1', 'TIE1', 'TP53I11')
+  # genes <- nichenetr::convert_mouse_to_human_symbols(symbols = genes)
 
   genes_o <- intersect(genes, rownames(adata))
 
