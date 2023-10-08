@@ -34,7 +34,7 @@ mmr_loss_score = function(x,m,sd,p.thresh=0.01)
 #'
 #' This function performs MMR (Mismatch Repair) Loss Score analysis for multiple Seurat objects, specifically related to colorectal cancer (CRC) phenotypes.
 #'
-#' @param seurat_obj_list A list of Seurat objects, each representing spatial transcriptome data for different samples.
+#' @param seurat_obj A list of Seurat objects, each representing spatial transcriptome data for different samples.
 #' @param sample_id A character vector of sample IDs corresponding to the Seurat objects.
 #' @param phenotype_id A character vector of phenotype labels for each sample.
 #'
@@ -51,35 +51,55 @@ mmr_loss_score = function(x,m,sd,p.thresh=0.01)
 #' @import patchwork
 #' @import reshape2
 #' @import ggsci
-STpheno <- function(seurat_obj_list, sample_id, phenotype_id){
+STpheno <- function(seurat_obj=NULL, sample_id, phenotype_id){
   # ----------------------------- filter genes ---------------------------------------
-  gene_name = c(rownames(seurat_obj_list[[1]]))
-  for (i in seurat_obj_list) {
-    gene_name = intersect(gene_name, rownames(i))
-  }
+  # gene_name = c(rownames(seurat_obj[[1]]))
+  # for (i in seurat_obj) {
+  #   gene_name = intersect(gene_name, rownames(i))
+  # }
   # ------------------------------------------------------
-
-  # ------------------------------- create mean expression profile in malignant cells ----------------------
-  mean_df = NULL
-  for (i in 1:length(seurat_obj_list)){
-    tmp = GetAssayData(seurat_obj_list[[i]], slot = 'data')
-
-    print(paste0(names(seurat_obj_list)[i], ': ', length(colnames(subset(seurat_obj_list[[i]], malignant == 'Malignant cells')))))
-    tmp = tmp[gene_name, colnames(subset(seurat_obj_list[[i]], malignant == 'Malignant cells')) ]
-
-    tmp = rowMeans(tmp)
-
-    mean_df = cbind(mean_df, tmp)
+  key4genes = c("MLH1","MSH2","MSH6","PMS2") #,"EPCAM")
+  phenotype_matrix_id = c(rep('dMMR', 3), rep('pMMR', 9))
+  if (!is.null(seurat_obj)) {
+    if (is.list(seurat_obj)) {
+      mean_df = mmr_matrix
+      for (i in 1:length(seurat_obj)){
+        tmp = AverageExpression(seurat_obj[[i]], features = key4genes, group.by = 'malignant')
+        mean_df = cbind(mean_df, tmp)
+        colnames(mean_df)[ncol(mean_df)] = sample_id[i]
+        phenotype_id = c(phenotype_matrix_id, phenotype_id[i])
+      }
+    }
+    # ------------------------------- create mean expression profile in malignant cells ----------------------
+    tmp = AverageExpression(seurat_obj, features = key4genes, group.by = 'malignant')
+    mean_df = cbind(tmp, mmr_matrix)
+    colnames(mean_df)[1] = sample_id
+    phenotype_id = c(rep('dMMR', 3), rep('pMMR', 9), phenotype_id)
+  }else {
+    mean_df = mmr_matrix
+    phenotype_id = c(rep('dMMR', 3), rep('pMMR', 9))
   }
-  dim(mean_df)
 
-  colnames(mean_df) = sample_id
-
-  meta = data.frame(sample = sample_id, phenotype = phenotype_id, rownames = sample_id)
+  # mean_df = NULL
+  # for (i in 1:length(seurat_obj)){
+  #   tmp = GetAssayData(seurat_obj[[i]], slot = 'data')
+  #
+  #   print(paste0(names(seurat_obj)[i], ': ', length(colnames(subset(seurat_obj[[i]], malignant == 'Malignant cells')))))
+  #   tmp = tmp[gene_name, colnames(subset(seurat_obj[[i]], malignant == 'Malignant cells')) ]
+  #
+  #   tmp = rowMeans(tmp)
+  #
+  #   mean_df = cbind(mean_df, tmp)
+  # }
+  # dim(mean_df)
+  #
+  # colnames(mean_df) = sample_id
+  #
+  meta = data.frame(sample = colnames(mean_df), phenotype = phenotype_id, rownames = colnames(mean_df))
   #######################################################
 
   #######-------------------------- MMR loss score -------------------------------------
-  key4genes = c("MLH1","MSH2","MSH6","PMS2") #,"EPCAM")
+
 
   normalized_counts = t(mean_df)
   centers = sds = matrix(NA,1,4,dimnames = list(names(normalized_counts),key4genes))
@@ -104,7 +124,7 @@ STpheno <- function(seurat_obj_list, sample_id, phenotype_id){
     sds[1,gene] = sd(normalized_counts[(tempmsi=="pMMR")|(is.na(tempmsi)), gene] )
   }
 
-  names(mc$classification) <- sample_id
+  names(mc$classification) <- colnames(mean_df)
 
 
   scores = list()
@@ -117,26 +137,32 @@ STpheno <- function(seurat_obj_list, sample_id, phenotype_id){
 
   tempscore = c(apply(scores[['CRC']],1,min))
   # sort(tempscore)
+  res = ifelse(tempscore> -2.409643, 'pMMR', 'dMMR')
+  print(res)
+  save(res, file='res.Rdata')
 
-  tempdf = data.frame(score = tempscore, phenotype = phenotype_id)
+  if (is.null(seurat_obj)) {
+    tempdf = data.frame(score = tempscore, phenotype = phenotype_id)
 
-  g = ggplot(tempdf, aes(x = score, y = 0.1)) + geom_point(aes(color = phenotype, size = 10)) + geom_label_repel(aes(score, 0.1, label = rownames(tempdf)), segment.colour="black", min.segment.length = 0) + guides(size = 'none', color = guide_legend(title = 'Phenotype')) +
-    theme_bw() + theme(text = element_text(size = 13)) + ylab('') + scale_y_discrete(labels = '') + xlab('MMR Loss score') + ggtitle('Stereo_CRC') + scale_color_manual(values = c("#f391bd","#8bc0ee")) + theme(panel.grid = element_blank())
-  pdf('scatter_dMMR_pMMR_classification.pdf')
-  print(g)
-  dev.off()
+    g = ggplot(tempdf, aes(x = score, y = 0.1)) + geom_point(aes(color = phenotype, size = 10)) + geom_label_repel(aes(score, 0.1, label = rownames(tempdf)), segment.colour="black", min.segment.length = 0) + guides(size = 'none', color = guide_legend(title = 'Phenotype')) +
+      theme_bw() + theme(text = element_text(size = 13)) + ylab('') + scale_y_discrete(labels = '') + xlab('MMR Loss score') + ggtitle('Stereo_CRC') + scale_color_manual(values = c("#f391bd","#8bc0ee")) + theme(panel.grid = element_blank())
+    pdf('scatter_dMMR_pMMR_classification.pdf')
+    print(g)
+    dev.off()
 
-  # --------------------- boxplot
-  tempdf$patient = rownames(tempdf)
-  test.method = "wilcox" # t.test, wilcox
-  g <- ggplot(tempdf, aes(x = phenotype, y = score)) + geom_boxplot(aes(fill = phenotype)) +
-    geom_point(aes(x = phenotype, y = score, color = patient, size = 4)) +
-    theme(legend.background = element_blank(), legend.key = element_blank(), text = element_text(size = 25), axis.text = element_text(size = 25, colour = 'black'), panel.background = element_rect(fill = "white"),
-          axis.line = element_line(colour = "black", size = 0.5)) + ylab('MMR Loss Score') + xlab('') + stat_compare_means(method = test.method, size = 8) + scale_color_brewer(palette = 'Paired') +
-    guides( color=guide_legend(title="Patient", override.aes = list(size=3)), size = F, fill = guide_legend(title = 'Group')) + scale_fill_manual(values = c("#f391bd","#8bc0ee"))
-  # png("boxplot_mmr_loss_score.png")
-  # print(g)
-  # dev.off()
+    # --------------------- boxplot
+    tempdf$patient = rownames(tempdf)
+    test.method = "wilcox" # t.test, wilcox
+    g <- ggplot(tempdf, aes(x = phenotype, y = score)) + geom_boxplot(aes(fill = phenotype)) +
+      geom_point(aes(x = phenotype, y = score, color = patient, size = 4)) +
+      theme(legend.background = element_blank(), legend.key = element_blank(), text = element_text(size = 25), axis.text = element_text(size = 25, colour = 'black'), panel.background = element_rect(fill = "white"),
+            axis.line = element_line(colour = "black", size = 0.5)) + ylab('MMR Loss Score') + xlab('') + stat_compare_means(method = test.method, size = 8) + scale_color_brewer(palette = 'Paired') +
+      guides( color=guide_legend(title="Patient", override.aes = list(size=3)), size = F, fill = guide_legend(title = 'Group')) + scale_fill_manual(values = c("#f391bd","#8bc0ee"))
+    # png("boxplot_mmr_loss_score.png")
+    # print(g)
+    # dev.off()
 
-  ggsave(filename = 'boxplot_MMR_loss_score.pdf', g, dpi = 300)
+    ggsave(filename = 'boxplot_MMR_loss_score.pdf', g, dpi = 300)
+  }
+
 }

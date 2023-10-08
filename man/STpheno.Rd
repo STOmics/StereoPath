@@ -4,10 +4,10 @@
 \alias{STpheno}
 \title{Perform MMR Loss Score Analysis for Multiple Seurat Objects}
 \usage{
-STpheno(seurat_obj_list, sample_id, phenotype_id)
+STpheno(seurat_obj = NULL, sample_id, phenotype_id)
 }
 \arguments{
-\item{seurat_obj_list}{A list of Seurat objects, each representing spatial transcriptome data for different samples.}
+\item{seurat_obj}{A list of Seurat objects, each representing spatial transcriptome data for different samples.}
 
 \item{sample_id}{A character vector of sample IDs corresponding to the Seurat objects.}
 

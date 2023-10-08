@@ -36,5 +36,13 @@
 #' }
 "geneOrder"
 
-
+#' MMR gene expression matrix
+#'
+#' @format A matrix with the following items:
+#' \describe{
+#'   \item{colnames}{sample id}
+#'   \item{rownames}{MMR genes}
+#'   \item{value}{mean expression in malignant cells}
+#' }
+"mmr_matrix"
 
