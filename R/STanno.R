@@ -53,7 +53,12 @@ STanno <- function(seurat_obj, cutoff = 0.1){
   dev.off()
 
   flog.info("Binary AUC score")
-  on_cells <- colnames(adata)[adata$auc > cutoff]
+  if (is.null(cutoff)) {
+    on_cells <- cells_assignment$vacular$assignment
+  }else{
+    on_cells <- colnames(adata)[adata$auc > cutoff]
+  }
+
   save(on_cells, file = 'on_cells.Rdata')
 
   flog.info("Spatial visualization of Endothelial")
