@@ -1,5 +1,5 @@
 # StereoPath
-StereoPath is an R package that provides functions to repeat traditional pathology of CRC using stereo-seq data. It enables the identification of malignant cells, analysis of vasculature structure, estimation of proliferative proportion, and classification of dMMR/pMMR phenotype.
+StereoPath is a toolkit that provides functions to repeat traditional pathology of CRC using stereo-seq data. It enables the identification of malignant cells, analysis of vasculature structure, estimation of proliferative proportion, and classification of dMMR/pMMR phenotype.
 
 ## Installation
 
