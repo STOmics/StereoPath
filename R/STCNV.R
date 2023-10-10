@@ -86,7 +86,7 @@ STCNV <- function(seurat_obj, test_adata, output_dir, gene_order_file, metadata,
   flog.info(sprintf("\n\n\tMODULE 2: Malignant identification\n"))
   # --------------------------------------------- Step2: kmeans cluster
   # ------------- 1.CNV score
-  infercnv_obj = readRDS(paste0('./', output, "/run.final.infercnv_obj"))
+  infercnv_obj = readRDS(paste0('./', output_dir, "/run.final.infercnv_obj"))
 
   cnv_test = infercnv_obj@expr.data[, unlist(infercnv_obj@observation_grouped_cell_indices)]
   # cnv_test = read.table(paste0(opt$workdir, '/', opt$output, '/infercnv.observations.txt'), header = T, check.names = F)
