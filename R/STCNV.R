@@ -100,8 +100,8 @@ STCNV <- function(seurat_obj, test_adata, output_dir, gene_order_file, metadata,
 
   write.table(CNV_score, file = "CNV_Score.txt", quote = FALSE, sep = '\t', row.names = T, col.names = T)
 
-  seurat_obj_test = subset(seurat_obj, metadata %in% ref_group_names, invert = T)
-  seurat_obj_test = RenameCells(seurat_obj_test, add.cell.id = patient_id)
+  seurat_obj_test = subset(seurat_obj, cells=colnames(seurat_obj)[seurat_obj@meta.data[, metadata] %in% c("Epi_19N", "Epi_34N")], invert = T)
+  # seurat_obj_test = RenameCells(seurat_obj_test, add.cell.id = patient_id)
 
   fil_seurat_obj_test = subset(seurat_obj_test, cells = rownames(CNV_score))
   fil_seurat_obj_test$cnv_score = CNV_score[colnames(fil_seurat_obj_test), 1]
