@@ -80,7 +80,9 @@ STCNV <- function(seurat_obj, test_adata, output_dir, gene_order_file, metadata,
                                HMM=HMM,
 
                                # 并行计算
-                               num_threads = num_threads
+                               num_threads = num_threads,
+
+                               useRaster = FALSE
   )
 
   flog.info(sprintf("\n\n\tMODULE 2: Malignant identification\n"))
