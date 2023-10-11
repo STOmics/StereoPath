@@ -4,7 +4,7 @@
 \alias{CNV_heatmap}
 \title{Create a CNV Heatmap}
 \usage{
-CNV_heatmap(adata, output_dir, file_name = "D8_rm_leiden3_cnv.pdf")
+CNV_heatmap(adata, output_dir, file_name = "D8_rm_leiden3_cnv.pdf", patient_id)
 }
 \arguments{
 \item{adata}{An input data object containing information for CNV analysis.}
@@ -12,6 +12,8 @@ CNV_heatmap(adata, output_dir, file_name = "D8_rm_leiden3_cnv.pdf")
 \item{output_dir}{The directory where the output heatmap file will be saved.}
 
 \item{file_name}{The name of the output heatmap file (default is "D8_rm_leiden3_cnv.pdf").}
+
+\item{patient_id}{A unique identifier for the patient or sample being analyzed.}
 }
 \value{
 This function doesn't return a value but saves the CNV heatmap as a PDF file.

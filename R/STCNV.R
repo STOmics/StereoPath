@@ -210,7 +210,7 @@ STCNV <- function(seurat_obj, test_adata, output_dir, gene_order_file, metadata,
 
   saveRDS(seurat_obj_test, file = 'seurat_malignant.rds')
 
-  CNV_heatmap(test_adata, output_dir = output_dir, file_name = file_name)
+  CNV_heatmap(test_adata, output_dir = output_dir, file_name = file_name, patient_id = patient_id)
 
   return(test_adata)
 }
@@ -222,6 +222,7 @@ STCNV <- function(seurat_obj, test_adata, output_dir, gene_order_file, metadata,
 #' @param adata An input data object containing information for CNV analysis.
 #' @param output_dir The directory where the output heatmap file will be saved.
 #' @param file_name The name of the output heatmap file (default is "D8_rm_leiden3_cnv.pdf").
+#' @param patient_id A unique identifier for the patient or sample being analyzed.
 #'
 #' @return This function doesn't return a value but saves the CNV heatmap as a PDF file.
 #'
@@ -234,7 +235,7 @@ STCNV <- function(seurat_obj, test_adata, output_dir, gene_order_file, metadata,
 #' @import infercnv
 #' @import tidyverse
 #' @import Seurat
-CNV_heatmap <- function(adata, output_dir, file_name = "D8_rm_leiden3_cnv.pdf"){
+CNV_heatmap <- function(adata, output_dir, file_name = "D8_rm_leiden3_cnv.pdf", patient_id){
 
   malignant_cells = colnames(adata)[which(as.character(adata$malignant) == 'Malignant cells')]
   non_malignant_cells = colnames(adata)[which(as.character(adata$malignant) == 'Non-Malignant cells')]
