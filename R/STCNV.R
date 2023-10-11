@@ -260,7 +260,7 @@ CNV_heatmap <- function(adata, output_dir, file_name = "D8_rm_leiden3_cnv.pdf", 
   dt_tumor = infercnv_obj@expr.data[, unlist(infercnv_obj@observation_grouped_cell_indices)] %>% t()
   dt_normal = infercnv_obj@expr.data[, unlist(infercnv_obj@reference_grouped_cell_indices)] %>% t()
 
-  dt_tumor = dt_tumor[paste(patient_id,tumor_cell_order, sep='_'), ]
+  dt_tumor = dt_tumor[tumor_cell_order, ]
 
 
   my_cols = pal_npg()(2)
