@@ -199,8 +199,9 @@ STCNV <- function(seurat_obj, test_adata, output_dir, gene_order_file, metadata,
 
   d1 <- DimPlot(tmp, group.by = 'malignant', reduction = 'spatial', cols = if(tapply(tmp$cnv_score, list(tmp$malignant), mean)[1]>tapply(tmp$cnv_score, list(tmp$malignant), mean)[2]){ my_cols }else{ rev(my_cols) }) + NoLegend()
   d2 <- DimPlot(tmp, group.by = 'malignant', reduction = 'spatial', split.by = 'malignant', cols = if(tapply(tmp$cnv_score, list(tmp$malignant), mean)[1]>tapply(tmp$cnv_score, list(tmp$malignant), mean)[2]){ my_cols }else{ rev(my_cols) })
+  d <- d1 + d2 + plot_layout(widths = c(1, 2))
   pdf('spatial_malignant.pdf', width = 18)
-  d1 + d2 + plot_layout(widths = c(1, 2))
+  print(d)
   dev.off()
 
   v <- VlnPlot(tmp, group.by = 'malignant', features = 'cnv_score', pt.size = 0, cols = if(tapply(tmp$cnv_score, list(tmp$malignant), mean)[1]>tapply(tmp$cnv_score, list(tmp$malignant), mean)[2]){my_cols}else{rev(my_cols)}) + NoLegend() + theme(axis.title = element_blank())
