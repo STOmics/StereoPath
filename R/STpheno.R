@@ -146,6 +146,7 @@ STpheno <- function(seurat_obj=NULL, sample_id, phenotype_id){
 
     g = ggplot(tempdf, aes(x = score, y = 0.1)) + geom_point(aes(color = phenotype, size = 10)) + geom_label_repel(aes(score, 0.1, label = rownames(tempdf)), segment.colour="black", min.segment.length = 0) + guides(size = 'none', color = guide_legend(title = 'Phenotype')) +
       theme_bw() + theme(text = element_text(size = 13)) + ylab('') + scale_y_discrete(labels = '') + xlab('MMR Loss score') + ggtitle('Stereo_CRC') + scale_color_manual(values = c("#f391bd","#8bc0ee")) + theme(panel.grid = element_blank())
+    print(g)
     pdf('scatter_dMMR_pMMR_classification.pdf')
     print(g)
     dev.off()
@@ -161,7 +162,7 @@ STpheno <- function(seurat_obj=NULL, sample_id, phenotype_id){
     # png("boxplot_mmr_loss_score.png")
     # print(g)
     # dev.off()
-
+    print(g)
     ggsave(filename = 'boxplot_MMR_loss_score.pdf', g, dpi = 300)
   }
 
