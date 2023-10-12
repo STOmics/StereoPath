@@ -200,11 +200,13 @@ STCNV <- function(seurat_obj, test_adata, output_dir, gene_order_file, metadata,
   d1 <- DimPlot(tmp, group.by = 'malignant', reduction = 'spatial', cols = if(tapply(tmp$cnv_score, list(tmp$malignant), mean)[1]>tapply(tmp$cnv_score, list(tmp$malignant), mean)[2]){ my_cols }else{ rev(my_cols) }) + NoLegend()
   d2 <- DimPlot(tmp, group.by = 'malignant', reduction = 'spatial', split.by = 'malignant', cols = if(tapply(tmp$cnv_score, list(tmp$malignant), mean)[1]>tapply(tmp$cnv_score, list(tmp$malignant), mean)[2]){ my_cols }else{ rev(my_cols) })
   d <- d1 + d2 + plot_layout(widths = c(1, 2))
+  print(d)
   pdf('spatial_malignant.pdf', width = 18)
   print(d)
   dev.off()
 
   v <- VlnPlot(tmp, group.by = 'malignant', features = 'cnv_score', pt.size = 0, cols = if(tapply(tmp$cnv_score, list(tmp$malignant), mean)[1]>tapply(tmp$cnv_score, list(tmp$malignant), mean)[2]){my_cols}else{rev(my_cols)}) + NoLegend() + theme(axis.title = element_blank())
+  print(v)
   png("vln_cnv_score_malig.png", width =  400)
   print(v)
   dev.off()
@@ -296,7 +298,7 @@ CNV_heatmap <- function(adata, output_dir, file_name = "D8_rm_leiden3_cnv.pdf", 
                  row_split = df, row_gap = unit(0, "mm"), height = unit(3, "cm"))
 
   ht_list  <- h_n %v% h_t
-
+  draw(ht_list, main_heatmap = 'Expression', padding = unit(c(5, 2, 2, 2), "mm"))
   pdf(file_name, width = 13)
   draw(ht_list, main_heatmap = 'Expression', padding = unit(c(5, 2, 2, 2), "mm"))
   dev.off()
