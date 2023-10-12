@@ -48,6 +48,7 @@ STanno <- function(seurat_obj, cutoff = 0.1){
   adata$auc = auc_matrix[1, ]
 
   f <- FeaturePlot(adata, features = 'auc', reduction = 'spatial', order = T, raster = F) + ggtitle('EC AUC Score')
+  print(f)
   pdf('EC_AUC_score.pdf')
   print(f)
   dev.off()
@@ -67,6 +68,7 @@ STanno <- function(seurat_obj, cutoff = 0.1){
   # table(adata$EC, useNA='always')
 
   d <- DimPlot(adata, group.by = 'EC', cols = "firebrick", na.value = 'lightgray', reduction = 'spatial', order = T, raster = F)
+  print(d)
   pdf("EC.pdf", height = 7, width = 7)
   print(d)
   dev.off()
@@ -124,6 +126,7 @@ STanno <- function(seurat_obj, cutoff = 0.1){
 
   flog.info("Spatial visualization of celltype")
   d <- DimPlot(adata, group.by = 'ec_singler_epcam_celltype', split.by = 'ec_singler_epcam_celltype', reduction = 'spatial', ncol = 4, cols = cols, raster = F)
+  print(d)
   png("sep_celltype_split.png", width = 1500, height = 1500)
   print(d)
   dev.off()
