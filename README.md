@@ -21,6 +21,10 @@ install.packages('StereoPath', repo=NULL)
 ## Usage
 
 ```
+library(StereoPath)
+library(dplyr)
+library(grid)
+
 # celltype annotation
 adata_anno <- STanno(adata, cutoff = 0.1)
 
@@ -33,8 +37,9 @@ STpheno(obj, sample_id = names(obj), phenotype_id = c(rep('dMMR', 3), rep('pMMR'
 
 
 ```
-# Estimation of proliferation proportion
+# Estimation of proliferation proportion in python
 # import function
+# wget https://github.com/STOmics/StereoPath/archive/refs/heads/main.zip and unzip main.zip
 import sys  
 sys.path.append("/StereoPath-main/")  
 from stereotyping import *
